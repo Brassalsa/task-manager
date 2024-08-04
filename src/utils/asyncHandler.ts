@@ -1,17 +1,23 @@
-import { Context } from "hono";
+import { Context, Next } from "hono";
 import STATUS from "./constants/statusCode";
+import { ApiError } from "./ApiResponses";
+type Cb = (c: Context, next?: Next) => Promise<Response>;
 
-type Cb = (c: Context) => Promise<any>;
-
-const asyncHanlder = async (cb: Cb) => async (c: Context) => {
+const asyncHanlder = (cb: Cb) => async (c: Context, next?: Next) => {
   try {
-    await cb(c);
+    return await cb(c, next);
   } catch (err: any) {
     c.status(err.statusCode || STATUS.serverErr);
-    c.json({
+
+    if (err instanceof ApiError) {
+      return c.json({ ...err, errors: undefined });
+    }
+
+    console.log(err);
+    return c.json({
       success: false,
       code: err.code,
-      statusCode: +err.statusCode || STATUS.serverErr,
+      statusCode: STATUS.serverErr,
       message: err.message,
       data: null,
     });
