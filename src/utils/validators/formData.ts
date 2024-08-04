@@ -73,3 +73,31 @@ export const pagingSchema = z.object({
   limit: z.coerce.number().optional().default(20),
   skip: z.coerce.number().optional().default(0),
 });
+
+export const idsSchema = z.object({
+  ids: z
+    .string()
+    .refine(
+      (val) => {
+        try {
+          const parsed = JSON.parse(val as string);
+          return (
+            Array.isArray(parsed) &&
+            parsed.every((id) => typeof id === "number")
+          );
+        } catch {
+          return false;
+        }
+      },
+      {
+        message: "invalid input: must be a JSON array of numbers",
+      }
+    )
+    .transform((val) => {
+      return JSON.parse(val as string);
+    }),
+});
+
+export const idSchema = z.object({
+  id: z.coerce.number({ message: "invalid id" }),
+});

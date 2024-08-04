@@ -9,3 +9,8 @@ export enum TaskPriority {
   normal = "normal",
   high = "high",
 }
+
+export enum UserType {
+  admin = "admin",
+  user = "user",
+}
