@@ -23,8 +23,8 @@ model Task {
   id            Int       @id @default(autoincrement())
   title         String
   description   String?
-  status        String?   @default("pending")
-  priority      String?   @default("normal")
+  status        String   @default("pending")
+  priority      String   @default("normal")
   due_date      DateTime
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
