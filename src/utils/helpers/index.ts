@@ -4,10 +4,14 @@ import STATUS from "../constants/statusCode";
 
 export function parseSafeData<I, O>(safeData: SafeParseReturnType<I, O>) {
   if (!safeData.success) {
+    console.log(safeData.error);
     const errors = safeData.error.flatten().fieldErrors;
     const keys = Object.keys(errors);
     const error = errors[keys[0] as keyof typeof errors]![0];
-    throw new ApiError(error, STATUS.unprocessable);
+    throw new ApiError(
+      `${keys[0]}: ${error}`.toLocaleLowerCase(),
+      STATUS.unprocessable
+    );
   }
   return safeData;
 }

@@ -15,7 +15,7 @@ type RegisteUser = {
 };
 
 type TokenType = {
-  id: string | number;
+  id: number;
   email: string;
 };
 
