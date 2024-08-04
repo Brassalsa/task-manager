@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.route";
 import taskRouter from "./routes/task.route";
+import adminRouter from "./routes/admin.route";
 
 dotenv.config();
 const app = new Hono();
@@ -13,6 +14,7 @@ app.get("/", (c) => {
 
 app.route("/api/v1/users", userRouter);
 app.route("/api/v1/tasks", taskRouter);
+app.route("/api/v1/admin", adminRouter);
 
 const port = Number(process.env.PORT) || 3000;
 
