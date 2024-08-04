@@ -16,7 +16,7 @@ model User {
   name      String? @default("user")
   password  String
   type      String  @default("user")
-  posts     Task[]
+  tasks     Task[]
 }
 
 model Task {
