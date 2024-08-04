@@ -50,3 +50,26 @@ export const updateTaskSchema = z.object({
   id: z.coerce.number(),
   ...taskSchema,
 });
+
+export const tasksFilterSchema = z.object({
+  status: z
+    .string()
+    .optional()
+    .refine((val) => {
+      if (val === undefined) return true;
+      return Object.keys(TaskStatus).includes(val);
+    }),
+  priority: z
+    .string()
+    .optional()
+    .refine((val) => {
+      if (val === undefined) return true;
+      return Object.keys(TaskPriority).includes(val);
+    }),
+  due_date: z.coerce.date().optional(),
+});
+
+export const pagingSchema = z.object({
+  limit: z.coerce.number().optional().default(20),
+  skip: z.coerce.number().optional().default(0),
+});

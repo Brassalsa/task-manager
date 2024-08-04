@@ -2,7 +2,9 @@ import { Hono } from "hono";
 import { verifyToken } from "../middlewares/auth.middleware";
 import {
   createTask,
+  deleteManyTasks,
   deleteTask,
+  getManyTasks,
   getTask,
   updateTask,
 } from "../controllers/task.controller";
@@ -19,5 +21,10 @@ taskRouter.post("/task", createTask);
 taskRouter.put("/task", updateTask);
 // delete task
 taskRouter.delete("/task", deleteTask);
+
+// get many tasks
+taskRouter.get("/list", getManyTasks);
+// delete many tasks
+taskRouter.delete("/list", deleteManyTasks);
 
 export default taskRouter;

@@ -6,6 +6,8 @@ import STATUS from "../utils/constants/statusCode";
 import { parseSafeData } from "../utils/helpers";
 import {
   createTaskSchema,
+  pagingSchema,
+  tasksFilterSchema,
   updateTaskSchema,
 } from "../utils/validators/formData";
 
@@ -72,14 +74,65 @@ export const deleteTask = asyncHanlder(async (c: UserContext) => {
       id: task.id,
     },
   });
-  return c.json(new ApiResponse(null, 200, "deleted successfully"));
+  return c.json(new ApiResponse(null, STATUS.ok, "deleted successfully"));
 });
+
+// get user tasks
+export const getManyTasks = asyncHanlder(async (c: UserContext) => {
+  const user = c.get("user") as TokenType;
+  const { filter, page } = getFilterData(c);
+
+  const tasks = await db.task.findMany({
+    where: {
+      user_id: user.id,
+      ...filter,
+    },
+    skip: page.skip,
+    take: page.limit,
+  });
+  return c.json(new ApiResponse(tasks));
+});
+
+// delete user tasks
+export const deleteManyTasks = asyncHanlder(async (c: UserContext) => {
+  const user = c.get("user") as TokenType;
+  const { ids: idStr } = await c.req.parseBody();
+  if (!idStr) {
+    throw new ApiError("ids are empty", 400);
+  }
+  const idArr = JSON.parse(idStr as string) as number[];
+  await db.task.deleteMany({
+    where: {
+      id: {
+        in: idArr,
+      },
+      user_id: user.id,
+    },
+  });
+  return c.json(new ApiResponse(null, STATUS.ok, "deleted successfully"));
+});
+
+// <------------------------helpers------------------->
+// helper for filter data
+const getFilterData = (c: UserContext) => {
+  const query = c.req.query();
+  const safeData = tasksFilterSchema.safeParse(query);
+  const { data: filter } = parseSafeData(safeData);
+
+  const pageData = pagingSchema.safeParse(query);
+  const { data: page } = parseSafeData(pageData);
+
+  return {
+    filter,
+    page,
+  };
+};
 
 // helper for getting user task
 const getTaskOrThrow = async (c: UserContext, id: string | number) => {
   const user = c.get("user") as TokenType;
   if (!Number(id)) {
-    throw new ApiError("invalid id", 400);
+    throw new ApiError("invalid id", STATUS.badRequest);
   }
   const task = await db.task.findUnique({
     where: {
@@ -89,7 +142,7 @@ const getTaskOrThrow = async (c: UserContext, id: string | number) => {
   });
 
   if (!task) {
-    throw new ApiError("task not found", 404);
+    throw new ApiError("task not found", STATUS.notFound);
   }
   return task;
 };
