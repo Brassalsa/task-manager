@@ -1,8 +1,14 @@
-import { SafeParseReturnType } from "zod";
+import { ZodSchema } from "zod";
 import { ApiError } from "../ApiResponses";
 import STATUS from "../constants/statusCode";
 
-export function parseSafeData<I, O>(safeData: SafeParseReturnType<I, O>) {
+export function parseSafeData<T>(
+  schema: ZodSchema<T>,
+  data: {
+    [x: string]: string | File;
+  }
+) {
+  const safeData = schema.safeParse(data);
   if (!safeData.success) {
     const errors = safeData.error.flatten().fieldErrors;
     const keys = Object.keys(errors);

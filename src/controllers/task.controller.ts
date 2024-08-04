@@ -6,6 +6,7 @@ import STATUS from "../utils/constants/statusCode";
 import { parseSafeData } from "../utils/helpers";
 import {
   createTaskSchema,
+  idsSchema,
   pagingSchema,
   tasksFilterSchema,
   updateTaskSchema,
@@ -14,8 +15,7 @@ import {
 // create task
 export const createTask = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
-  const safeData = createTaskSchema.safeParse(formData);
-  const { data } = parseSafeData(safeData);
+  const { data } = parseSafeData(createTaskSchema, formData);
   const user = c.get("user") as TokenType;
   const task = await db.task.create({
     data: {
@@ -44,8 +44,7 @@ export const getTask = asyncHanlder(async (c: UserContext) => {
 // update task
 export const updateTask = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
-  const safeData = updateTaskSchema.safeParse(formData);
-  const { data } = parseSafeData(safeData);
+  const { data } = parseSafeData(updateTaskSchema, formData);
   const user = c.get("user") as TokenType;
 
   const validTask = await getTaskOrThrow(c, data.id);
@@ -96,15 +95,12 @@ export const getManyTasks = asyncHanlder(async (c: UserContext) => {
 // delete user tasks
 export const deleteManyTasks = asyncHanlder(async (c: UserContext) => {
   const user = c.get("user") as TokenType;
-  const { ids: idStr } = await c.req.parseBody();
-  if (!idStr) {
-    throw new ApiError("ids are empty", 400);
-  }
-  const idArr = JSON.parse(idStr as string) as number[];
+  const formData = await c.req.parseBody();
+  const { data } = parseSafeData(idsSchema, formData);
   await db.task.deleteMany({
     where: {
       id: {
-        in: idArr,
+        in: data.ids,
       },
       user_id: user.id,
     },
@@ -116,11 +112,10 @@ export const deleteManyTasks = asyncHanlder(async (c: UserContext) => {
 // helper for filter data
 const getFilterData = (c: UserContext) => {
   const query = c.req.query();
-  const safeData = tasksFilterSchema.safeParse(query);
-  const { data: filter } = parseSafeData(safeData);
+  const { data: filter } = parseSafeData(tasksFilterSchema, query);
 
   const pageData = pagingSchema.safeParse(query);
-  const { data: page } = parseSafeData(pageData);
+  const { data: page } = parseSafeData(pagingSchema, query);
 
   return {
     filter,

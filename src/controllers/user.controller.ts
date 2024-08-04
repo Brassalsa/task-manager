@@ -14,7 +14,7 @@ export const registerUser = asyncHanlder(async (c) => {
   const parsedBody = await c.req.parseBody();
   // parse form data
   const safeData = registerSchema.safeParse(parsedBody);
-  const { data } = parseSafeData(safeData);
+  const { data } = parseSafeData(registerSchema, parsedBody);
   // check if user already exists
   const dup = await db.user.findUnique({
     where: {
@@ -51,8 +51,7 @@ export const registerUser = asyncHanlder(async (c) => {
 // login user
 export const loginUser = asyncHanlder(async (c) => {
   const formData = await c.req.parseBody();
-  const safeData = loginSchema.safeParse(formData);
-  const { data } = parseSafeData(safeData);
+  const { data } = parseSafeData(loginSchema, formData);
   const user = await db.user.findUnique({
     where: {
       email: data.email,
@@ -101,8 +100,7 @@ export const accountDetails = asyncHanlder(async (c: UserContext) => {
 // update account
 export const updateAccount = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
-  const safeData = registerSchema.safeParse(formData);
-  const { data } = parseSafeData(safeData);
+  const { data } = parseSafeData(registerSchema, formData);
   const user = c.get("user") as TokenType;
   // check if duplicate email
   const dup = await db.user.findUnique({
@@ -144,8 +142,7 @@ export const updateAccount = asyncHanlder(async (c: UserContext) => {
 // delete account
 export const deleteAccount = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
-  const safeData = loginSchema.safeParse(formData);
-  const { data } = parseSafeData(safeData);
+  const { data } = parseSafeData(loginSchema, formData);
   const token = c.get("user") as TokenType;
   // check account email
   if (token.email !== data.email) {
