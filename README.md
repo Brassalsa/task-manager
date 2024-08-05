@@ -2,6 +2,32 @@
 
 This is a Task Manager API built with Hono.js in TypeScript. It allows users to register, log in, and perform CRUD operations on tasks. The API also includes admin controls.
 
+## Description
+
+### Users
+
+Users can register, login (with their email and password), delete their accounts, they can also perform crud operations on their tasks. The also can fetch multiple tasks by applying **filters**:
+
+1. **limit**: No. of tasks fetched
+2. **skip**: page number
+
+### Tasks
+
+Task can be created by users. It can be fetched in a list by providing **filter**:
+
+1. **limit**: No. of tasks fetched
+2. **skip**: page number
+3. **priority**: low, normal and high
+4. **due_date**: Due date of tasks.
+
+### Admins
+
+Admin users can view, delete user details. They can create other admin users and also promote user to admins. They cann't delete other admin users or demote them.
+They also can fetch multiple users by applying **filters**:
+
+1. **limit**: No. of tasks fetched
+2. **skip**: page number
+
 ## Installation
 
 To set up the project locally, follow these steps:
