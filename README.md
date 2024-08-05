@@ -51,6 +51,8 @@ npm run dev
 
 ### API Docs
 
+Run the project and the go to "/docs"
+
 ```
  http://localhost:3000/docs
 ```
