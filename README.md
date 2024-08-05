@@ -77,8 +77,18 @@ npm run dev
 
 ### API Docs
 
-Run the project and the go to "/docs"
+Run the project and the go to **"/docs"**
 
 ```
  http://localhost:3000/docs
 ```
+
+For **authorization**: register or login, then copy the token and paste in authorization button(green lock on top right), then you can access the all routes but for **admin routes**, need to manually change the user type to admin in db.
+
+To run the db on browser run:
+
+```bash
+npx prisma studio
+```
+
+it will open the db in browser and you can make changes accordingly.
