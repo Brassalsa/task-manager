@@ -23,9 +23,9 @@ export const loginSchema = z.object({
 });
 
 // task schema
-const taskSchema = {
+export const taskSchema = {
   title: z.string(),
-  description: z.string().optional(),
+  description: z.string().optional().nullable(),
   status: z
     .string()
     .optional()

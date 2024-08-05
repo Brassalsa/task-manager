@@ -13,9 +13,10 @@ class ApiResponse<T> {
 
 class ApiError extends Error {
   data: null;
-  statusCode?: number;
+  statusCode: number;
   message: string;
-  success?: boolean;
+  success: boolean;
+
   stack?: string;
   errors: any[];
 

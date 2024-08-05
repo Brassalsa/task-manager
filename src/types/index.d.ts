@@ -1,8 +1,7 @@
-import type { Context } from "hono";
+import type { Context, Env, Input } from "hono";
 
 type ResponseT<T> = {
   success: boolean;
-  code?: number;
   statusCode: number;
   message: string;
   data: T;
@@ -19,6 +18,12 @@ type TokenType = {
   email: string;
 };
 
-interface UserContext extends Context {
+type UserContext = Context<
+  ENV & {
+    user: TokenType;
+  },
+  string,
+  Input
+> & {
   user?: TokenType;
-}
+};

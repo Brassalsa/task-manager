@@ -38,7 +38,7 @@ export const createTask = asyncHanlder(async (c: UserContext) => {
 export const getTask = asyncHanlder(async (c: UserContext) => {
   const { id } = c.req.query();
   const task = await getTaskOrThrow(c, id);
-  return c.json({ ...task, user_id: undefined });
+  return c.json(new ApiResponse({ ...task, user_id: undefined }));
 });
 
 // update task
