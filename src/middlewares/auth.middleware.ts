@@ -1,7 +1,7 @@
 import type { Next } from "hono";
 import { ApiError, ApiResponse } from "../utils/ApiResponses";
 import { decodeToken } from "../utils/auth/jwt";
-import { ResponseT, TokenType, UserContext } from "../types";
+import { TokenType, UserContext } from "../types";
 import STATUS from "../utils/constants/statusCode";
 import db from "../db";
 import { UserType } from "../utils/constants";
@@ -9,12 +9,13 @@ import { UserType } from "../utils/constants";
 export const verifyToken = async (c: UserContext, next: Next) => {
   try {
     const header = c.req.header();
-    const tokenArr = header["authorization"].split("Bearer ");
-    const token = tokenArr[1];
+    const tokenArr = header["authorization"]?.split("Bearer ");
+    if (!tokenArr) {
+      throw new ApiError("unauthorized", STATUS.forbidden);
+    }
+    const token = tokenArr?.[1];
     if (!token) {
-      return c.json(
-        new ApiResponse(null, 401, "token malformed") satisfies ResponseT<null>
-      );
+      throw new ApiError("token malformed", STATUS.unprocessable);
     }
 
     const user = await decodeToken(token);
@@ -27,7 +28,6 @@ export const verifyToken = async (c: UserContext, next: Next) => {
       return c.json({ ...err, errors: undefined });
     }
 
-    console.log(err);
     return c.json({
       success: false,
       code: err.code,
