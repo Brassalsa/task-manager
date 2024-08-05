@@ -7,14 +7,24 @@ import {
 } from "../controllers/user.controller";
 import { verifyToken } from "../middlewares/auth.middleware";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { loginSchema, registerSchema } from "../utils/validators/formData";
 import {
-  generateContent,
+  idsSchema,
+  loginSchema,
+  registerSchema,
+} from "../utils/validators/formData";
+import {
+  generateFormContent,
+  generateJsonContent,
   responseSchema,
   resSchema,
 } from "../utils/docs/helpers";
 import { ApiResponse } from "../utils/ApiResponses";
-import { badRequest, notFound, serverErr } from "../utils/docs/errors";
+import {
+  badRequest,
+  notFound,
+  serverErr,
+  unprocessable,
+} from "../utils/docs/errors";
 
 const tags = ["User"];
 const userRouter = new OpenAPIHono();
@@ -27,10 +37,10 @@ userRouter.openapi(
     path: "/register",
     description: "Register",
     request: {
-      body: generateContent(registerSchema, ""),
+      body: generateFormContent(registerSchema, "Register"),
     },
     responses: {
-      201: generateContent(
+      201: generateJsonContent(
         resSchema(
           z.object({
             token: z.string(),
@@ -39,6 +49,7 @@ userRouter.openapi(
         "success"
       ),
       400: badRequest("email already exists"),
+      422: unprocessable(),
       500: serverErr(),
     },
   }),
@@ -54,11 +65,12 @@ userRouter.openapi(
 
     description: "Login",
     request: {
-      body: generateContent(loginSchema, ""),
+      body: generateFormContent(loginSchema, ""),
     },
     responses: {
-      200: generateContent(loginSchema, "success"),
+      200: generateJsonContent(loginSchema, "success"),
       404: notFound(),
+      422: unprocessable(),
       500: serverErr(),
     },
   }),
@@ -76,8 +88,9 @@ userRouter.openapi(
     method: "get",
     path: "/account",
     description: "Account Details",
+    security: [{ AuthBearer: [] }],
     responses: {
-      200: generateContent(
+      200: generateJsonContent(
         responseSchema,
         "success",
         new ApiResponse({ id: 0, name: "John", email: "john@wick.org" })
@@ -96,11 +109,15 @@ userRouter.openapi(
     method: "put",
     path: "/account",
     description: "Update Account",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(registerSchema, ""),
+      headers: z.object({
+        authorization: z.string().optional(),
+      }),
+      body: generateFormContent(registerSchema, ""),
     },
     responses: {
-      200: generateContent(registerSchema, "success"),
+      200: generateJsonContent(registerSchema, "success"),
       404: notFound(),
       500: serverErr(),
     },
@@ -115,12 +132,17 @@ userRouter.openapi(
     method: "delete",
     path: "/account",
     description: "Delete account",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(loginSchema, ""),
+      headers: z.object({
+        authorization: z.string().optional(),
+      }),
+      body: generateFormContent(loginSchema, ""),
     },
     responses: {
-      200: generateContent(loginSchema, "success"),
+      200: generateJsonContent(loginSchema, "success"),
       404: notFound(),
+
       500: serverErr(),
     },
   }),

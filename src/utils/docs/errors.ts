@@ -2,7 +2,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { ResponseT } from "../../types";
 import STATUS from "../constants/statusCode";
 import { ApiResponse } from "../ApiResponses";
-import { generateContent, responseSchema } from "./helpers";
+import { generateJsonContent, responseSchema } from "./helpers";
 export const errorSchema = {
   schema: z.object({
     success: z.boolean(),
@@ -17,7 +17,7 @@ export const errorResp = (message: string, statusCode?: number) => {
 };
 
 export const notFound = (msg = "not found") => {
-  return generateContent(
+  return generateJsonContent(
     responseSchema,
     "Error",
     new ApiResponse(null, 404, msg)
@@ -25,7 +25,7 @@ export const notFound = (msg = "not found") => {
 };
 
 export const serverErr = (msg = "something went wrong") => {
-  return generateContent(
+  return generateJsonContent(
     responseSchema,
     "Bad Request",
     new ApiResponse(null, 500, msg)
@@ -33,9 +33,17 @@ export const serverErr = (msg = "something went wrong") => {
 };
 
 export const badRequest = (msg = "bad request") => {
-  return generateContent(
+  return generateJsonContent(
     responseSchema,
     "Server Error",
     new ApiResponse(null, 400, msg)
+  );
+};
+
+export const unprocessable = (msg = "unprocessable") => {
+  return generateJsonContent(
+    responseSchema,
+    "Server Error",
+    new ApiResponse(null, 422, msg)
   );
 };

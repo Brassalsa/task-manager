@@ -7,7 +7,11 @@ import {
   userToAdmin,
 } from "../controllers/admin.controller";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { generateContent, responseSchema } from "../utils/docs/helpers";
+import {
+  generateFormContent,
+  generateJsonContent,
+  responseSchema,
+} from "../utils/docs/helpers";
 import { ApiResponse } from "../utils/ApiResponses";
 import { idSchema, idsSchema } from "../utils/validators/formData";
 import STATUS from "../utils/constants/statusCode";
@@ -29,8 +33,9 @@ adminRouter.openapi(
     method: "get",
     path: "/users",
     description: "Admin: Get Users List",
+    security: [{ AuthBearer: [] }],
     responses: {
-      200: generateContent(
+      200: generateJsonContent(
         responseSchema,
         "success",
         new ApiResponse(
@@ -57,13 +62,14 @@ adminRouter.openapi(
     method: "delete",
     path: "/users",
     description: "Admin: Delete Users",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(idsSchema, "", {
+      body: generateFormContent(idsSchema, "", {
         ids: [1, 2, 3, 4],
       }),
     },
     responses: {
-      200: generateContent(
+      200: generateJsonContent(
         responseSchema,
         "success",
         new ApiResponse(null, STATUS.ok, "deleted")
@@ -83,11 +89,12 @@ adminRouter.openapi(
     method: "get",
     path: "/user",
     description: "Admin: Get User Details",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(idSchema, "Enter id", { id: 1 }),
+      body: generateFormContent(idSchema, "Enter id", { id: 1 }),
     },
     responses: {
-      200: generateContent(
+      200: generateJsonContent(
         responseSchema,
         "success",
         new ApiResponse(
@@ -116,8 +123,9 @@ adminRouter.openapi(
     method: "post",
     path: "/users",
     description: "Admin: Create Admin",
+    security: [{ AuthBearer: [] }],
     responses: {
-      201: generateContent(
+      201: generateJsonContent(
         responseSchema,
         "success",
         new ApiResponse(
@@ -143,11 +151,12 @@ adminRouter.openapi(
     method: "put",
     path: "/users",
     description: "Admin: Promote user to admin",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(idSchema, ""),
+      body: generateFormContent(idSchema, ""),
     },
     responses: {
-      200: generateContent(
+      200: generateJsonContent(
         responseSchema,
         "success",
         new ApiResponse(

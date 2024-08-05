@@ -9,7 +9,8 @@ import {
 } from "../controllers/task.controller";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import {
-  generateContent,
+  generateFormContent,
+  generateJsonContent,
   responseSchema,
   resSchema,
 } from "../utils/docs/helpers";
@@ -36,11 +37,12 @@ taskRouter.openapi(
     method: "get",
     path: "/task",
     description: "Get Task",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(resSchema(createTaskSchema), ""),
+      query: idsSchema,
     },
     responses: {
-      200: generateContent(resSchema(updateTaskSchema), "success"),
+      200: generateJsonContent(resSchema(updateTaskSchema), "success"),
       404: notFound(),
       500: serverErr(),
     },
@@ -55,11 +57,12 @@ taskRouter.openapi(
     method: "post",
     path: "/task",
     description: "Create task",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(createTaskSchema, ""),
+      body: generateFormContent(createTaskSchema, ""),
     },
     responses: {
-      200: generateContent(createTaskSchema, "success"),
+      200: generateJsonContent(createTaskSchema, "success"),
       400: badRequest(),
       500: serverErr(),
     },
@@ -74,11 +77,12 @@ taskRouter.openapi(
     method: "put",
     path: "/task",
     description: "Update task",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(updateTaskSchema, ""),
+      body: generateFormContent(updateTaskSchema, ""),
     },
     responses: {
-      200: generateContent(updateTaskSchema, "success"),
+      200: generateJsonContent(updateTaskSchema, "success"),
       404: notFound(),
       500: serverErr(),
     },
@@ -93,12 +97,12 @@ taskRouter.openapi(
     method: "delete",
     path: "/task?id=1",
     description: "Delete task",
-
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(idSchema, "Enter"),
+      body: generateFormContent(idSchema, "Enter"),
     },
     responses: {
-      200: generateContent(updateTaskSchema, "success"),
+      200: generateJsonContent(updateTaskSchema, "success"),
       404: notFound(),
       500: serverErr(),
     },
@@ -114,11 +118,12 @@ taskRouter.openapi(
     method: "get",
     path: "/list",
     description: "get many task",
+    security: [{ AuthBearer: [] }],
     request: {
       query: pagingSchema,
     },
     responses: {
-      200: generateContent(
+      200: generateJsonContent(
         z.array(
           z.object({
             id: z.number(),
@@ -140,11 +145,12 @@ taskRouter.openapi(
     method: "delete",
     path: "/list",
     description: "Delete Tasks",
+    security: [{ AuthBearer: [] }],
     request: {
-      body: generateContent(idsSchema, "", { ids: [1, 2, 3] }),
+      body: generateFormContent(idsSchema, "", { ids: [1, 2, 3] }),
     },
     responses: {
-      201: generateContent(responseSchema, "success"),
+      201: generateJsonContent(responseSchema, "success"),
       404: notFound(),
       500: serverErr(),
     },

@@ -16,7 +16,7 @@ export const resSchema = <T>(schema: ZodSchema<T>) => {
   });
 };
 
-export const generateContent = <T>(
+export const generateJsonContent = <T>(
   schema: ZodSchema<T>,
   description: string,
   example?: T
@@ -24,6 +24,22 @@ export const generateContent = <T>(
   return {
     content: {
       "application/json": {
+        schema: schema,
+        example,
+      },
+    },
+    description,
+  };
+};
+
+export const generateFormContent = <T>(
+  schema: ZodSchema<T>,
+  description: string,
+  example?: T
+) => {
+  return {
+    content: {
+      "application/x-www-form-urlencoded": {
         schema: schema,
         example,
       },
