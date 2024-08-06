@@ -1,3 +1,4 @@
+import { Context, Env, Input } from "hono";
 import db from "../db";
 import { TokenType, UserContext } from "../types";
 import { ApiError, ApiResponse } from "../utils/ApiResponses";
@@ -16,7 +17,7 @@ import {
 export const createTask = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
   const { data } = parseSafeData(createTaskSchema, formData);
-  const user = c.get("user") as TokenType;
+  const user = c.get("user");
   const task = await db.task.create({
     data: {
       ...data,
@@ -45,7 +46,7 @@ export const getTask = asyncHanlder(async (c: UserContext) => {
 export const updateTask = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
   const { data } = parseSafeData(updateTaskSchema, formData);
-  const user = c.get("user") as TokenType;
+  const user = c.get("user");
 
   const validTask = await getTaskOrThrow(c, data.id);
 
@@ -78,7 +79,7 @@ export const deleteTask = asyncHanlder(async (c: UserContext) => {
 
 // get user tasks
 export const getManyTasks = asyncHanlder(async (c: UserContext) => {
-  const user = c.get("user") as TokenType;
+  const user = c.get("user");
   const { filter, page } = getFilterData(c);
 
   const tasks = await db.task.findMany({
@@ -94,7 +95,7 @@ export const getManyTasks = asyncHanlder(async (c: UserContext) => {
 
 // delete user tasks
 export const deleteManyTasks = asyncHanlder(async (c: UserContext) => {
-  const user = c.get("user") as TokenType;
+  const user = c.get("user");
   const formData = await c.req.parseBody();
   const { data } = parseSafeData(idsSchema, formData);
   await db.task.deleteMany({
@@ -113,8 +114,6 @@ export const deleteManyTasks = asyncHanlder(async (c: UserContext) => {
 const getFilterData = (c: UserContext) => {
   const query = c.req.query();
   const { data: filter } = parseSafeData(tasksFilterSchema, query);
-
-  const pageData = pagingSchema.safeParse(query);
   const { data: page } = parseSafeData(pagingSchema, query);
 
   return {

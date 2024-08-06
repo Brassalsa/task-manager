@@ -19,11 +19,11 @@ type TokenType = {
 };
 
 type UserContext = Context<
-  ENV & {
-    user: TokenType;
+  Env & {
+    Variables: {
+      user: TokenType;
+    };
   },
   string,
   Input
-> & {
-  user?: TokenType;
-};
+>;

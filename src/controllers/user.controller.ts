@@ -13,7 +13,6 @@ import { Context } from "hono";
 export const registerUser = asyncHanlder(async (c) => {
   const parsedBody = await c.req.parseBody();
   // parse form data
-  const safeData = registerSchema.safeParse(parsedBody);
   const { data } = parseSafeData(registerSchema, parsedBody);
   // check if user already exists
   const dup = await db.user.findUnique({
@@ -81,7 +80,7 @@ export const loginUser = asyncHanlder(async (c) => {
 
 // get account details
 export const accountDetails = asyncHanlder(async (c: UserContext) => {
-  const user = c.get("user") as TokenType;
+  const user = c.get("user");
   const account = await db.user.findUnique({
     where: user,
     select: {
@@ -101,7 +100,7 @@ export const accountDetails = asyncHanlder(async (c: UserContext) => {
 export const updateAccount = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
   const { data } = parseSafeData(registerSchema, formData);
-  const user = c.get("user") as TokenType;
+  const user = c.get("user");
   // check if duplicate email
   const dup = await db.user.findUnique({
     where: {
@@ -143,7 +142,7 @@ export const updateAccount = asyncHanlder(async (c: UserContext) => {
 export const deleteAccount = asyncHanlder(async (c: UserContext) => {
   const formData = await c.req.parseBody();
   const { data } = parseSafeData(loginSchema, formData);
-  const token = c.get("user") as TokenType;
+  const token = c.get("user");
   // check account email
   if (token.email !== data.email) {
     throw new ApiError("wrong email", STATUS.badRequest);
@@ -175,6 +174,7 @@ export const deleteAccount = asyncHanlder(async (c: UserContext) => {
   return c.json(new ApiResponse("deleted successfully"));
 });
 
+//<------------------------ helpers ------------------------------------->
 const setAuthHeader = (c: Context, token: string) => {
   c.header("Authorization", `Bearer ${token}`);
 };

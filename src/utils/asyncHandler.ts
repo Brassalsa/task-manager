@@ -1,15 +1,13 @@
-import { Context, Env, Input, Next, TypedResponse } from "hono";
+import { Context, Next, TypedResponse } from "hono";
 import STATUS from "./constants/statusCode";
 import { ApiError } from "./ApiResponses";
-type Cb<T extends Context<Env, string, Input>, R extends TypedResponse> = (
+type Cb<T extends Context, R extends TypedResponse> = (
   c: T,
   next?: Next
 ) => Promise<R>;
 
 const asyncHanlder =
-  <T extends Context<Env, string, Input>, R extends TypedResponse>(
-    cb: Cb<T, R>
-  ) =>
+  <T extends Context, R extends TypedResponse>(cb: Cb<T, R>) =>
   async (c: T, next?: Next) => {
     try {
       return await cb(c, next);
