@@ -57,6 +57,13 @@ DATABASE_URL="file:./dev.db"
 
 ## Usage
 
+### Generate and migrate the db
+
+```
+npx prisma generate
+npx prisma migrate dev --name init
+```
+
 #### Run with npm
 
 ```
