@@ -27,3 +27,9 @@ type UserContext = Context<
   string,
   Input
 >;
+
+declare module Hono {
+  interface ContextVariableMap {
+    user: TokenType;
+  }
+}

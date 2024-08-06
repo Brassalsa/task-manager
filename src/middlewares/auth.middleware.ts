@@ -18,7 +18,7 @@ export const verifyToken = async (c: UserContext, next: Next) => {
       throw new ApiError("token malformed", STATUS.unprocessable);
     }
 
-    const user = await decodeToken(token);
+    const user = await decodeToken<TokenType>(token);
     c.set("user", user);
     await next();
   } catch (err: any) {

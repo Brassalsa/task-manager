@@ -7,11 +7,7 @@ import {
 } from "../controllers/user.controller";
 import { verifyToken } from "../middlewares/auth.middleware";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import {
-  idsSchema,
-  loginSchema,
-  registerSchema,
-} from "../utils/validators/formData";
+import { loginSchema, registerSchema } from "../utils/validators/formData";
 import {
   generateFormContent,
   generateJsonContent,

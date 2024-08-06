@@ -8,6 +8,6 @@ export const encodeData = async (payload: JWTPayload) => {
   return await sign(payload, secret);
 };
 
-export const decodeToken = async (token: string) => {
-  return await verify(token, secret);
+export const decodeToken = async <T>(token: string) => {
+  return (await verify(token, secret)) as T;
 };

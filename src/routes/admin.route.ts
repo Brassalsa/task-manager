@@ -6,7 +6,7 @@ import {
   userDetails,
   userToAdmin,
 } from "../controllers/admin.controller";
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import {
   generateFormContent,
   generateJsonContent,

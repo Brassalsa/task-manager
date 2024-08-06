@@ -1,5 +1,4 @@
 import { serve } from "@hono/node-server";
-import { Hono } from "hono";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.route";
 import taskRouter from "./routes/task.route";
@@ -9,6 +8,15 @@ import { swaggerUI } from "@hono/swagger-ui";
 
 dotenv.config();
 const app = new OpenAPIHono();
+const port = Number(process.env.PORT) || 3000;
+
+app.get(
+  "/docs",
+  swaggerUI({
+    url: "/api/docs",
+    withCredentials: true,
+  })
+);
 app.doc("/api/docs", {
   openapi: "3.0.0",
   info: {
@@ -29,27 +37,18 @@ app.doc("/api/docs", {
   ],
 });
 
-app.get(
-  "/docs",
-  swaggerUI({
-    url: "/api/docs",
-    withCredentials: true,
-  })
-);
 app.openAPIRegistry.registerComponent("securitySchemes", "AuthBearer", {
   type: "http",
   scheme: "bearer",
   bearerFormat: "JWT",
 });
 app.get("/", (c) => {
-  return c.text("Hello Hono!");
+  return c.text("App is live!");
 });
 
 app.route("/api/v1/users", userRouter);
 app.route("/api/v1/tasks", taskRouter);
 app.route("/api/v1/admin", adminRouter);
-
-const port = Number(process.env.PORT) || 3000;
 
 console.log(`Server is running on http://localhost:${port}`);
 
